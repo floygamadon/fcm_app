@@ -1,4 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'services/fcm_service.dart';
 
@@ -23,8 +23,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _setupFCM() async {
     await _fcmService.initialize(
-      onData: (RemoteMessage message) {
-        final assetName = message.data['asset'] ?? 'default';
+      onData: (message) {
+        final assetName = message.data['asset'] ?? 'cat';
 
         setState(() {
           statusText = message.notification?.title ?? 'Payload received';
@@ -34,7 +34,11 @@ class _HomePageState extends State<HomePage> {
     );
 
     final token = await _fcmService.getToken();
-    debugPrint('FCM Token: $token');
+    debugPrint('Current device token: $token');
+    
+    _fcmService.listenToTokenRefresh((token) {
+    debugPrint('Updated device token: $token');
+  });
   }
 
   @override
@@ -59,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               height: 200,
               errorBuilder: (context, error, stackTrace) {
                 return Image.asset(
-                  'assets/images/default.png',
+                  'assets/images/cat.png',
                   width: 200,
                   height: 200,
                 );
