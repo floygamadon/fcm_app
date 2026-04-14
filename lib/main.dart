@@ -2,14 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
-import 'services/fcm_service.dart';
+import 'home_page.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  debugPrint('Background message: ${message.messageId}');
 }
 
 Future<void> main() async {
@@ -19,23 +18,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseMessaging.onBackgroundMessage(
-    firebaseMessagingBackgroundHandler,
-  );
-
-  final fcmService = FCMService();
-
-  await fcmService.initialize(
-    onData: (message) {
-      debugPrint('Title: ${message.notification?.title}');
-      debugPrint('Body: ${message.notification?.body}');
-      debugPrint('Data: ${message.data}');
-    },
-  );
-  
-  final token = await fcmService.getToken();
-  debugPrint('FCM Token: $token');
-
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 
@@ -46,12 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FCM App',
-      home: const Scaffold(
-        body: Center(
-          child: Text('FCM App Ready'),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }

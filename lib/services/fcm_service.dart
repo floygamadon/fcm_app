@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 
 class FCMService {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -13,16 +12,9 @@ class FCMService {
       sound: true,
     );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Foreground message: ${message.messageId}');
-      onData(message);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('Notification tapped: ${message.messageId}');
-      onData(message);
-    });
-
+    FirebaseMessaging.onMessage.listen(onData);
+    FirebaseMessaging.onMessageOpenedApp.listen(onData);
+      
     final initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
       onData(initialMessage);
