@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
+import 'services/fcm_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -21,6 +22,19 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(
     firebaseMessagingBackgroundHandler,
   );
+
+  final fcmService = FCMService();
+
+  await fcmService.initialize(
+    onData: (message) {
+      debugPrint('Title: ${message.notification?.title}');
+      debugPrint('Body: ${message.notification?.body}');
+      debugPrint('Data: ${message.data}');
+    },
+  );
+  
+  final token = await fcmService.getToken();
+  debugPrint('FCM Token: $token');
 
   runApp(const MyApp());
 }
